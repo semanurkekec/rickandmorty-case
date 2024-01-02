@@ -5,6 +5,7 @@ interface State {
 interface Action {
   addToSelection: (id: number) => void;
   removeFromSelection: (id: number) => void;
+  removeLast: () => void;
 }
 export const store = create<State & Action>((set) => ({
   selection: new Set<number>(),
@@ -18,6 +19,12 @@ export const store = create<State & Action>((set) => ({
     set((state) => {
       state.selection.delete(id);
       return { selection: new Set(state.selection) };
+    }),
+  removeLast: () =>
+    set((state) => {
+      const arr = Array.from(state.selection);
+      arr.pop();
+      return { selection: new Set(arr) };
     }),
 }));
 

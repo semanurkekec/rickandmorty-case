@@ -1,25 +1,25 @@
-import { useSelection } from "./store";
+import { useQuery } from "@tanstack/react-query";
+import { getCharacterById } from "./service/api";
 
-export default function Chips() {
-  const { selection, removeFromSelection } = useSelection();
-  const selectedIds = Array.from(selection);
-  return (
-    <div className="horizontal-flex" style={{ gap: "4px" }}>
-      {selectedIds.map((id) => (
-        <Chip character={{ id }} onRemove={removeFromSelection} />
-      ))}
-    </div>
-  );
-}
-
-function Chip(props: {
-  character: { id: number; name?: string };
+export default function Chip(props: {
+  character: { id: number };
   onRemove: (id: number) => void;
 }) {
   const {
-    character: { id, name = "unnamed" },
+    character: { id },
     onRemove,
   } = props;
+  const query = useQuery({
+    queryKey: ["character", id],
+    queryFn: async () => await getCharacterById(id),
+  });
+  if (query.isError) {
+    throw query.error;
+  }
+  if (query.isLoading || query.isPending) {
+    return <span>loading</span>;
+  }
+  const { name } = query.data;
   function handleRemove() {
     onRemove(id);
   }
@@ -28,8 +28,34 @@ function Chip(props: {
       className="chip"
       style={{ display: "flex", alignItems: "center", gap: "4px" }}
     >
-      <span>{name}</span>
-      <button onClick={handleRemove}>x</button>
+      <span
+        style={{
+          whiteSpace: "nowrap",
+          textOverflow: "ellipsis",
+          overflow: "hidden",
+        }}
+      >
+        {name}
+      </span>
+      <button
+        className="remove"
+        onClick={(e) => {
+          e.preventDefault();
+          handleRemove();
+        }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          height="16"
+          viewBox="0 -960 960 960"
+          width="16"
+        >
+          <path
+            fill="currentcolor"
+            d="M480-424 284-228q-11 11-28 11t-28-11q-11-11-11-28t11-28l196-196-196-196q-11-11-11-28t11-28q11-11 28-11t28 11l196 196 196-196q11-11 28-11t28 11q11 11 11 28t-11 28L536-480l196 196q11 11 11 28t-11 28q-11 11-28 11t-28-11L480-424Z"
+          />
+        </svg>
+      </button>
     </div>
   );
 }

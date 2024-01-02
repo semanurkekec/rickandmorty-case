@@ -7,6 +7,7 @@ export default function MultiSelect() {
   const [search, setSearch] = useState("");
   const debounced = useDebounce(search);
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
+
     setSearch(event.target.value);
   }
 
