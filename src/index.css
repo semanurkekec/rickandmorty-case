@@ -2,67 +2,81 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color-scheme: light;
+  
+  background-color: #efefef;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --const-white: #efefef;
+  --primary-main: rgb(103, 133, 144);
+  --primary-light: rgb(185, 201, 207);
+  --primary-dark: rgb(108, 126, 133);
+  --secondary-light: rgb(212, 224, 228);
+  --text-primary: #2f2f2f;
+  --text-secondary: #efefef;
+  --bordercolor: var(--primary-dark, black);
+  --spacing-1: 8px;
+  --spacing-2: 12px;
+  color: var(--text-primary,#2f2f2f);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+* {
+  box-sizing: border-box;
 }
-a:hover {
-  color: #535bf2;
+.loader {
+  /* border-top: 16px solid blue;  */
+  background-color: var(--bordercolor);
+  border-radius: 12px;
+  width: 12px;
+  margin: 4px;
+  aspect-ratio: 1;
+  align-self: center;
+  z-index: 1;
+  animation: tide 1s alternate infinite;
+}
+
+@keyframes tide {
+  0% {
+    transform: translate(0%);
+    opacity: 0.2;
+  }
+  30% {
+    transform: translate(-100%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0%);
+    opacity: 0.2;
+  }
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  /* border: 1px solid gray; */
+  margin: 16px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 5px;
+}
+input {
+  background-color: var(--const-white, #ffffff);
+  border: 1px solid;
+  caret-color: #232323;
+}
+input:focus,
+input:focus-visible {
+  outline: none;
 }
 
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  justify-content: center;
   min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  min-height: 100dvh;
 }
