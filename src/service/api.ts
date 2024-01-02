@@ -4,12 +4,15 @@ import { Character, Info } from "../interfaces";
 
 const api = axios.create({ baseURL: "https://rickandmortyapi.com/api" });
 
-export async function getCharacters(name = ""): Promise<{
+export async function getCharacters(params: {
+  name: string;
+  page?: string;
+}): Promise<{
   info: Info;
   results: Character[];
 }> {
   return await api
-    .request({ method: "GET", url: "character", params: { name } })
+    .request({ method: "GET", url: "character", params })
     .then((response) => response.data)
     .catch((error) => {
       if (isAxiosError(error)) {
@@ -23,8 +26,8 @@ export async function getCharacters(name = ""): Promise<{
 
 export function useGetCharacters(search = "") {
   return useQuery({
-    queryKey: ["characters", search === "" ? "all" : search],
-    queryFn: () => getCharacters(search),
+    queryKey: ["characters", search],
+    queryFn: () => getCharacters({ name: search }),
     retry: 1,
   });
 }

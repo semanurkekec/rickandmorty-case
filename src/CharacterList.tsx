@@ -1,11 +1,21 @@
 import match from "autosuggest-highlight/match";
 import { Character } from "./interfaces";
-import { useGetCharacters } from "./service/api";
+import { getCharacters } from "./service/api";
 import parse from "autosuggest-highlight/parse";
 import { useSelection } from "./store";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export function CharacterResult(props: { inputValue: string }) {
-  const query = useGetCharacters(props.inputValue);
+  const query = useInfiniteQuery({
+    queryKey: ["characters", props.inputValue],
+    initialPageParam: "0",
+    queryFn: async ({ pageParam }) =>
+      await getCharacters({ name: props.inputValue, page: pageParam }),
+    getNextPageParam: (lastPage) => {
+      const { searchParams } = new URL(lastPage.info.next ?? "");
+      return searchParams.get("page");
+    },
+  });
   if (query.isError) {
     return <span>{query.error.message}</span>;
   }
@@ -15,13 +25,13 @@ export function CharacterResult(props: { inputValue: string }) {
   if (query.isPending) {
     return <span>Pending...</span>;
   }
-  const { results, info } = query.data;
-  const hasMore = Boolean(info.next);
+  const { fetchNextPage, data, hasNextPage } = query;
+  const results = data.pages.flatMap((page) => page.results);
   return (
     <>
       <CharacterList characters={results} {...props} />
-      {hasMore ? (
-        <button>load more</button>
+      {hasNextPage ? (
+        <button onClick={() => fetchNextPage()}>load more</button>
       ) : (
         <span style={{ fontSize: "12px", opacity: 0.6 }}>
           <i>end of list</i>
